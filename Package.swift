@@ -13,6 +13,7 @@ let platformsWithThreads: [Platform] = [
     .android,
     .linux,
     .windows,
+    .custom("freebsd")
 ]
 
 var dispatchIncludeFlags: [CSetting] = []
@@ -58,7 +59,8 @@ if let environmentPath = Context.environment["CURL_INCLUDE_PATH"] {
 
 var curlLinkFlags: [LinkerSetting] = [
     .linkedLibrary("libcurl.lib", .when(platforms: [.windows])),
-    .linkedLibrary("zlibstatic.lib", .when(platforms: [.windows]))
+    .linkedLibrary("zlibstatic.lib", .when(platforms: [.windows])),
+    .linkedLibrary("curl", .when(platforms: [.custom("freebsd")])),
 ]
 if let environmentPath = Context.environment["CURL_LIBRARY_PATH"] {
     curlLinkFlags.append(.unsafeFlags([
@@ -72,7 +74,8 @@ if let environmentPath = Context.environment["ZLIB_LIBRARY_PATH"] {
 }
 
 var libxmlLinkFlags: [LinkerSetting] = [
-    .linkedLibrary("libxml2s.lib", .when(platforms: [.windows]))
+    .linkedLibrary("libxml2s.lib", .when(platforms: [.windows])),
+    .linkedLibrary("xml2", .when(platforms: [.custom("freebsd")]))
 ]
 if let environmentPath = Context.environment["LIBXML_LIBRARY_PATH"] {
     libxmlLinkFlags.append(.unsafeFlags([
@@ -203,7 +206,10 @@ let package = Package(
             exclude: [
                 "CMakeLists.txt"
             ],
-            swiftSettings: swiftBuildSettings
+            swiftSettings: swiftBuildSettings,
+            linkerSettings: [
+               .linkedLibrary("execinfo", .when(platforms: [.custom("freebsd")]))
+            ]
         ),
         .target(
             name: "FoundationXML",
