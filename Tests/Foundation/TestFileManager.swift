@@ -1356,14 +1356,22 @@ class TestFileManager : XCTestCase {
             let code = ($0 as? CocoaError)?.code
             XCTAssertEqual(code, emptyFileNameError ?? .fileNoSuchFile)
         }
+
+        // POSIX actually allow symlink("", ...), it is crazy but on some systems it is not an error :mindblown:
+        #if !os(FreeBSD)
         XCTAssertThrowsError(try fm.createSymbolicLink(atPath: "/tmp/t", withDestinationPath: "")) {
             let code = ($0 as? CocoaError)?.code
             XCTAssertEqual(code, .fileNoSuchFile)
         }
+        #endif
 
         XCTAssertThrowsError(try fm.destinationOfSymbolicLink(atPath: "")) {
             let code = ($0 as? CocoaError)?.code
+            #if os(FreeBSD)
+            XCTAssertEqual(code, emptyFileNameError ?? .fileReadUnknown)
+            #else
             XCTAssertEqual(code, emptyFileNameError ?? .fileReadNoSuchFile)
+            #endif
         }
         XCTAssertFalse(fm.fileExists(atPath: ""))
         XCTAssertFalse(fm.fileExists(atPath: "", isDirectory: nil))

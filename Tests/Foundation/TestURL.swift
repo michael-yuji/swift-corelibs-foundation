@@ -132,7 +132,7 @@ class TestURL : XCTestCase {
         #elseif os(Android)
         let baseURL = URL(fileURLWithPath: "/data", isDirectory: true)
         let relativePath = "local"
-        #elseif os(Linux) || os(OpenBSD)
+        #elseif os(Linux) || os(OpenBSD) || os(FreeBSD)
         let baseURL = URL(fileURLWithPath: "/usr", isDirectory: true)
         let relativePath = "include"
         #elseif os(Windows)
@@ -775,7 +775,7 @@ class TestURL : XCTestCase {
             throw error
         }
     }
-    
+    #if !os(FreeBSD)
     func test_dataFromNonFileURL() {
         do {
             // Tests the up-call to FoundationNetworking to perform the network request
@@ -787,7 +787,7 @@ class TestURL : XCTestCase {
             }
         }
     }
-
+#endif
     // MARK: -
 
     nonisolated(unsafe) var writableTestDirectoryURL: URL!

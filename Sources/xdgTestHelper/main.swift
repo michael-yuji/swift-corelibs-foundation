@@ -65,9 +65,19 @@ class XDGCheck {
 
 #if !os(Windows)
 // -----
+#if os(FreeBSD)
+func dummySignalHandler(_ _sig: CInt) {
+}
+#endif
 
 // Used by TestProcess: test_interrupt(), test_suspend_resume()
 func signalTest() {
+
+    #if os(FreeBSD)
+    // on FreeBSD, SIGCONT are ignored by default and will not trigger sigwait
+    // unless we set a dummy handler and allow it through
+    signal(SIGCONT, dummySignalHandler)
+    #endif
 
     var signalSet = sigset_t()
     sigemptyset(&signalSet)

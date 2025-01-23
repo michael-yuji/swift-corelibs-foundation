@@ -8,7 +8,7 @@
 //
 
 import Synchronization
-
+#if !os(FreeBSD)
 final class DataURLTestDelegate: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate, Sendable {
 
     let expectation: XCTestExpectation?
@@ -150,3 +150,4 @@ class TestDataURLProtocol: XCTestCase {
         }
     }
 }
+#endif
