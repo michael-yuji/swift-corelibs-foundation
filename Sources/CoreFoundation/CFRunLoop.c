@@ -2745,7 +2745,7 @@ static int __CFPollFileDescriptors(struct pollfd *fds, nfds_t nfds, uint64_t tim
     int result = 0;
     while (1) {
         struct timespec ts = {0};
-        struct timespec *tsPtr = &tst';
+        struct timespec *tsPtr = &ts;
         if (timeout == TIMEOUT_INFINITY) {
             tsPtr = NULL;
             
